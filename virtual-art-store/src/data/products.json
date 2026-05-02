@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "title": "Ocean Study",
+    "price": 120,
+    "image": "https://picsum.photos/id/1018/900/600",
+    "description": "A calming seascape study with layered blues and textured brushwork.",
+    "creator": "A. Marin",
+    "year": 2021,
+    "medium": "Oil on canvas",
+    "dimensions": "24 x 18 in",
+    "tags": ["seascape","calm","blue"]
+  },
+  {
+    "id": 2,
+    "title": "Sunset Field",
+    "price": 200,
+    "image": "https://picsum.photos/id/1025/900/600",
+    "description": "Warm, impressionistic view of a field at sunset with luminous color.",
+    "creator": "M. Rivera",
+    "year": 2019,
+    "medium": "Acrylic on panel",
+    "dimensions": "30 x 20 in",
+    "tags": ["landscape","sunset","warm"]
+  },
+  {
+    "id": 3,
+    "title": "City Lines",
+    "price": 150,
+    "image": "https://picsum.photos/id/1031/900/600",
+    "description": "Abstracted urban geometry rendered with confident linework.",
+    "creator": "K. Zhou",
+    "year": 2023,
+    "medium": "Ink and mixed media",
+    "dimensions": "18 x 24 in",
+    "tags": ["abstract","city","ink"]
+  },
+  {
+    "id": 4,
+    "title": "Forest Mist",
+    "price": 180,
+    "image": "https://picsum.photos/id/1043/900/600",
+    "description": "Soft, atmospheric study of light through misty woodland.",
+    "creator": "L. Okoye",
+    "year": 2020,
+    "medium": "Watercolor on paper",
+    "dimensions": "22 x 30 in",
+    "tags": ["forest","mist","atmosphere"]
+  },
+  {
+    "id": 5,
+    "title": "Quiet Harbor",
+    "price": 95,
+    "image": "https://picsum.photos/id/1056/900/600",
+    "description": "Small harbor scene capturing still water and gentle light.",
+    "creator": "S. Patel",
+    "year": 2018,
+    "medium": "Gouache on paper",
+    "dimensions": "12 x 16 in",
+    "tags": ["harbor","water","small"]
+  },
+  {
+    "id": 6,
+    "title": "Midnight Bloom",
+    "price": 220,
+    "image": "https://picsum.photos/id/1062/900/600",
+    "description": "A nocturnal floral composition with deep contrast and jewel tones.",
+    "creator": "R. Alvarez",
+    "year": 2022,
+    "medium": "Oil on linen",
+    "dimensions": "28 x 22 in",
+    "tags": ["floral","night","bold"]
+  }
+]
