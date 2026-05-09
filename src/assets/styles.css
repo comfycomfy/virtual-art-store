@@ -8,7 +8,7 @@ body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvet
 
 h1,h2,h3 { color: #123 }
 
-.container { max-width:1100px; margin:0 auto; padding:1rem }
+.container { min-width:100vh; margin:0 auto; padding:1rem }
 
 .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:1rem; align-items:stretch; justify-content:center; justify-items:center }
 

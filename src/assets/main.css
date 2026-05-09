@@ -7,6 +7,19 @@
   font-weight: normal;
 }
 
+main {
+  min-height: calc(100vh - 64px);
+  margin-top: 64px;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center; /* vertical */
+  align-items: center;     /* horizontal */
+
+  text-align: center;
+}
+
 a,
 .green {
   text-decoration: none;
@@ -34,4 +47,51 @@ a,
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
+}
+
+/* Utility: center content horizontally and vertically using flexbox */
+.center-flex{
+    min-height: calc(100vh - 72px);
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+}
+
+@media (max-width:720px){
+  .center-flex{min-height:calc(100vh - 64px);padding:1.25rem}
+}
+
+/* Theme overrides when root has .dark class */
+.dark {
+  --color-background: #0b1220;
+  --color-text: #e6eef8;
+  --color-heading: #ffffff;
+  --color-background-soft: #0f1726;
+  --nav-bg: rgba(8,10,15,0.8);
+}
+
+/* Ensure body uses variables */
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+body.dark {
+  background: #111;
+   color: #fff;
+}
+
+ body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark p,
+body.dark a,
+body.dark li {
+  color: white;
 }

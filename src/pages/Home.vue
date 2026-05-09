@@ -1,10 +1,8 @@
 <template>
   <section class="container home-center">
-    <section class="title-and-info">
       <h1>Welcome to the Virtual Art Store</h1>
       <p>Discover original art pieces. Browse the store to see photos and prices.</p>
       <router-link to="/store" class="green">Enter Store →</router-link>
-    </section>
     <h2 style="margin-top:2rem">Featured</h2>
     <div class="grid">
       <ProductCard
@@ -29,7 +27,15 @@ const featured = products.slice(0, 2)
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 140px);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  text-align: center;
+
+  /* account for fixed top nav height */
+  min-height: calc(100vh - 72px);
 }
 
 .title-and-info {
