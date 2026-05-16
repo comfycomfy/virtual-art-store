@@ -1,30 +1,17 @@
 <template>
-  <header>
-    <nav>
-      <router-link to="/">Home</router-link>
-      |
-      <router-link to="/store">Store</router-link>
-    </nav>
-  </header>
-
   <TopNav />
-
   <main>
     <router-view />
   </main>
+  <SiteFooter />
 </template>
 
 <script>
 import TopNav from './components/TopNav.vue'
+import SiteFooter from './components/Footer.vue'
 
 export default {
   name: 'App',
-  components: { TopNav }
+  components: { TopNav, SiteFooter }
 }
 </script>
-
-<style>
-main {
-  padding-top: 72px;
-}
-</style>

@@ -1,97 +1,39 @@
 @import './base.css';
 
+/* App shell */
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 main {
-  min-height: calc(100vh - 64px);
-  margin-top: 64px;
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center; /* vertical */
-  align-items: center;     /* horizontal */
-
-  text-align: center;
+  flex: 1;
+  padding-top: var(--nav-height);
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(0, 0%, 100%, 1);
-  transition: 0.4s;
-  padding: 3px;
+/* Smooth page transitions */
+a { transition: color var(--transition-fast); }
+a:hover { color: var(--accent); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: var(--radius-xs);
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(140, 100%, 37%, 0.2);
-  }
+/* Custom scrollbar */
+::-webkit-scrollbar        { width: 6px; }
+::-webkit-scrollbar-track  { background: var(--bg-soft); }
+::-webkit-scrollbar-thumb  { background: var(--border-hover); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Selection */
+::selection {
+  background: rgba(var(--accent-rgb), 0.2);
+  color: var(--heading);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-    position: relative;
-
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-}
-
-/* Utility: center content horizontally and vertically using flexbox */
-.center-flex{
-    min-height: calc(100vh - 72px);
-
-  display: flex;
-  flex-direction: column;
-
-  justify-content: center;
-  align-items: center;
-
-  text-align: center;
-}
-
-@media (max-width:720px){
-  .center-flex{min-height:calc(100vh - 64px);padding:1.25rem}
-}
-
-/* Theme overrides when root has .dark class */
-.dark {
-  --color-background: #0b1220;
-  --color-text: #e6eef8;
-  --color-heading: #ffffff;
-  --color-background-soft: #0f1726;
-  --nav-bg: rgba(8,10,15,0.8);
-}
-
-/* Ensure body uses variables */
-body {
-  margin: 0;
-  background: var(--color-background);
-  color: var(--color-text);
-}
-
-body.dark {
-  background: #111;
-   color: #fff;
-}
-
- body.dark h1,
-body.dark h2,
-body.dark h3,
-body.dark p,
-body.dark a,
-body.dark li {
-  color: white;
-}
+/* Dark mode utility */
+.dark .invert-on-dark { filter: invert(1); }

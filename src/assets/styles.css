@@ -1,19 +1,244 @@
-/* Starter global styles for the Virtual Art Store */
-:root{
-  --accent: #0a9;
-  --muted: #666;
+/* ============================================
+   ARTISAN — Global Utilities & Components
+   ============================================ */
+
+/* ---- Layout -------------------------------- */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
 }
 
-body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#222 }
+@media (max-width: 640px) {
+  .container { padding: 0 1rem; }
+}
 
-h1,h2,h3 { color: #123 }
+.section        { padding: 5rem 0; }
+.section-sm     { padding: 3rem 0; }
+.section-xs     { padding: 1.5rem 0; }
 
-.container { min-width:100vh; margin:0 auto; padding:1rem }
+/* ---- Product Grids ------------------------- */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
 
-.grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:1rem; align-items:stretch; justify-content:center; justify-items:center }
+@media (max-width: 1100px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1.25rem; } }
+@media (max-width: 480px)  { .products-grid { grid-template-columns: 1fr; } }
 
-.card { display:flex; flex-direction:column }
+/* ---- Buttons ------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.6rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background var(--transition-fast), color var(--transition-fast),
+              border-color var(--transition-fast), box-shadow var(--transition-fast);
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
 
-.green { color:var(--accent); }
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.35);
+}
 
-button { cursor:pointer }
+.btn-outline {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.btn-outline:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+.btn-ghost:hover {
+  background: var(--bg-soft);
+  border-color: var(--border-hover);
+}
+
+.btn-dark {
+  background: var(--heading);
+  color: var(--bg);
+  border-color: var(--heading);
+}
+.btn-dark:hover { opacity: 0.85; }
+
+.btn-lg {
+  padding: 0.85rem 2.4rem;
+  font-size: 0.9rem;
+}
+
+.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.78rem;
+}
+
+/* ---- Art Frame ----------------------------- */
+.art-frame {
+  border: 10px solid var(--frame-outer);
+  outline: 1px solid var(--frame-inner);
+  display: block;
+  line-height: 0;
+  box-shadow: var(--shadow-md);
+  background: var(--frame-mat);
+  overflow: hidden;
+}
+
+.art-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Section Headers ----------------------- */
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+.section-header h2 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin-bottom: 0.5rem;
+}
+.section-header p {
+  color: var(--text-muted);
+  font-size: 1rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.section-header .label {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.6rem;
+}
+
+/* ---- Tags & Pills -------------------------- */
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.7rem;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  font-size: 0.83rem;
+  color: var(--text);
+  background: var(--bg-soft);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+.pill:hover, .pill.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-light);
+}
+
+/* ---- Divider ------------------------------- */
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* ---- Badges -------------------------------- */
+.badge-instock    { color: #22c55e; font-weight: 600; font-size: 0.9rem; }
+.badge-lowstock   { color: #f59e0b; font-weight: 600; font-size: 0.9rem; }
+.badge-outofstock { color: #ef4444; font-weight: 600; font-size: 0.9rem; }
+
+/* ---- Breadcrumb ---------------------------- */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb .sep { opacity: 0.4; }
+.breadcrumb .current { color: var(--text); }
+
+/* ---- Accordion ----------------------------- */
+.accordion {
+  border-top: 1px solid var(--border);
+}
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+}
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--accent);
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+.accordion-header:hover { color: var(--accent-hover); }
+.accordion-header .icon {
+  width: 20px; height: 20px;
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+  line-height: 1;
+  transition: transform var(--transition-fast);
+}
+.accordion-header.open .icon { transform: rotate(45deg); }
+.accordion-body {
+  padding: 0 0 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+/* ---- Misc ---------------------------------- */
+.text-accent  { color: var(--accent); }
+.text-muted   { color: var(--text-muted); }
+.text-serif   { font-family: var(--font-serif); }
+.fw-600       { font-weight: 600; }
+.mt-1  { margin-top: 0.5rem; }
+.mt-2  { margin-top: 1rem; }
+.mt-3  { margin-top: 1.5rem; }
+.mb-1  { margin-bottom: 0.5rem; }
+.mb-2  { margin-bottom: 1rem; }
