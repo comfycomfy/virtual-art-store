@@ -56,7 +56,8 @@
 
       <!-- Empty state -->
       <div v-if="sortedProducts.length === 0" class="empty-state">
-        <p>No artworks match this filter.</p>
+        <p v-if="activeCategory === 'Wishlist'">Your wishlist is empty. Add some artworks to get started!</p>
+        <p v-else>No artworks match this filter.</p>
         <button class="btn btn-outline" @click="activeCategory = 'All'">Clear filter</button>
       </div>
     </div>
@@ -66,18 +67,24 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ProductCard from '../components/ProductCard.vue'
+import { useWishlist } from '../composables/useWishlist.js'
 import allProducts from '../data/products.json'
 
+const { getWishlistIds } = useWishlist()
 const activeCategory = ref('All')
 const sortBy = ref('default')
 
-const categories = ['All', ...new Set(allProducts.map(p => p.category))]
+const categories = ['All', 'Wishlist', ...new Set(allProducts.map(p => p.category))]
 
-const filteredProducts = computed(() =>
-  activeCategory.value === 'All'
+const filteredProducts = computed(() => {
+  if (activeCategory.value === 'Wishlist') {
+    const wishlistIds = getWishlistIds()
+    return allProducts.filter(p => wishlistIds.includes(p.id))
+  }
+  return activeCategory.value === 'All'
     ? allProducts
     : allProducts.filter(p => p.category === activeCategory.value)
-)
+})
 
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value]

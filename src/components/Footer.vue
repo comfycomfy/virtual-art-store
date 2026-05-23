@@ -38,32 +38,32 @@
         </p>
         <nav class="social-links" aria-label="Social media">
           <!-- Facebook -->
-          <a href="#" class="social-link" aria-label="Facebook" @click.prevent>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Facebook">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
             </svg>
           </a>
           <!-- Twitter/X -->
-          <a href="#" class="social-link" aria-label="Twitter" @click.prevent>
+          <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
               <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
             </svg>
           </a>
           <!-- LinkedIn -->
-          <a href="#" class="social-link" aria-label="LinkedIn" @click.prevent>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
               <circle cx="4" cy="4" r="2"/>
             </svg>
           </a>
           <!-- Pinterest -->
-          <a href="#" class="social-link" aria-label="Pinterest" @click.prevent>
+          <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Pinterest">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.853 0 1.267.641 1.267 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.137-1.868 3.137-4.564 0-2.387-1.716-4.055-4.165-4.055-2.837 0-4.502 2.128-4.502 4.328 0 .856.33 1.774.741 2.276a.3.3 0 01.069.286c-.076.315-.245 1-.278 1.134-.045.183-.15.222-.345.134-1.249-.582-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S17.523 2 12 2z"/>
             </svg>
           </a>
           <!-- Instagram -->
-          <a href="#" class="social-link" aria-label="Instagram" @click.prevent>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>

@@ -63,14 +63,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCart } from '../composables/useCart.js'
+import { useWishlist } from '../composables/useWishlist.js'
 
 const props = defineProps({ product: { type: Object, required: true } })
 
 const { addItem } = useCart()
-const wishlisted = ref(false)
+const { toggleWishlist, isWishlisted } = useWishlist()
 const added = ref(false)
+
+const wishlisted = computed(() => isWishlisted(props.product.id))
 
 function onAddToCart() {
   if (!props.product.inStock) return
@@ -80,7 +83,7 @@ function onAddToCart() {
 }
 
 function onWishlist() {
-  wishlisted.value = !wishlisted.value
+  toggleWishlist(props.product.id)
 }
 </script>
 

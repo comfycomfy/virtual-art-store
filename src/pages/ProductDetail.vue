@@ -89,7 +89,7 @@
           <button class="btn btn-outline" :disabled="!product.inStock" @click="onAddToCart">
             {{ addedToCart ? 'Added ✓' : 'Add to Cart' }}
           </button>
-          <button class="btn btn-ghost" @click="wishlisted = !wishlisted">
+          <button class="btn btn-ghost" @click="onWishlist">
             {{ wishlisted ? '♥ In Wishlist' : '♡ Add to Wishlist' }}
           </button>
         </div>
@@ -224,19 +224,22 @@
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCart } from '../composables/useCart.js'
+import { useWishlist } from '../composables/useWishlist.js'
 import ProductCard from '../components/ProductCard.vue'
 import allProducts from '../data/products.json'
 
 const route = useRoute()
 const { addItem } = useCart()
+const { toggleWishlist, isWishlisted } = useWishlist()
 
 const id = Number(route.params.id)
 const product = allProducts.find(p => p.id === id)
 
 const qty = ref(1)
-const wishlisted = ref(false)
 const addedToCart = ref(false)
 const openAccordion = ref('desc')
+
+const wishlisted = computed(() => isWishlisted(product?.id))
 
 const recommended = computed(() =>
   allProducts.filter(p => p.id !== id).slice(0, 4)
@@ -256,6 +259,12 @@ function onAddToCart() {
 function onBuyNow() {
   if (!product?.inStock) return
   addItem(product, qty.value)
+}
+
+function onWishlist() {
+  if (product?.id) {
+    toggleWishlist(product.id)
+  }
 }
 </script>
 
@@ -455,6 +464,106 @@ function onBuyNow() {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+}
+
+/* Accordion */
+.accordion {
+  margin: 1.5rem 0;
+}
+
+.accordion-item {
+  border-bottom: 1px solid var(--border);
+}
+
+.accordion-item:first-child .accordion-header {
+  border-top: 1px solid var(--border);
+}
+
+.accordion-header {
+  width: 100%;
+  padding: 0.875rem 0;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  text-align: left;
+}
+
+.accordion-header:hover {
+  color: var(--accent);
+}
+
+/* Dark mode accordion header styling - matches btn-ghost */
+:global(.dark) .accordion-header {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+:global(.dark) .accordion-header:hover {
+  background: var(--bg-soft);
+  border-color: var(--border-hover);
+}
+
+:global(.dark) .accordion-item {
+  border: none;
+  margin-bottom: 0;
+}
+
+:global(.dark) .accordion-item:first-child .accordion-header {
+  border-top: 1px solid var(--accent);
+  margin-top: 0;
+}
+
+.accordion-header .icon {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.accordion-body {
+  padding: 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.6;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:global(.dark) .accordion-body {
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.accordion-body p {
+  margin: 0;
+}
+
+.accordion-body p.mt-1 {
+  margin-top: 0.5rem;
+}
+
+.accordion-body ul.mt-2 {
+  margin-top: 0.5rem;
 }
 
 /* Enquiry */

@@ -20,11 +20,30 @@
         <li><router-link to="/" class="nav-link" exact-active-class="active">Home</router-link></li>
         <li><router-link to="/store" class="nav-link" active-class="active">Shop</router-link></li>
         <li><a href="#about" class="nav-link" @click.prevent>About</a></li>
-        <li><a href="#contact" class="nav-link" @click.prevent>Contact</a></li>
+        <li><router-link to="/contact" class="nav-link" active-class="active">Contact</router-link></li>
       </ul>
 
       <!-- Right controls -->
       <div class="nav-controls">
+        <!-- Sign in button (not signed in) -->
+        <router-link v-if="!isSignedIn" to="/login" class="signin-btn" aria-label="Sign in">
+          Sign In
+        </router-link>
+
+        <!-- Account menu (signed in) -->
+        <div v-else class="account-menu">
+          <button class="account-btn" @click="showAccountMenu = !showAccountMenu" :aria-expanded="showAccountMenu">
+            <span class="account-email">{{ userName }}</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div v-if="showAccountMenu" class="account-dropdown">
+            <router-link to="/" class="dropdown-link" @click="showAccountMenu = false">My Account</router-link>
+            <a href="#" @click.prevent="handleSignOut" class="dropdown-link sign-out-link">Sign Out</a>
+          </div>
+        </div>
+
         <!-- Theme toggle -->
         <button
           class="icon-btn theme-toggle"
@@ -83,8 +102,10 @@
         <li><router-link to="/" class="mobile-link" @click="close" exact-active-class="active">Home</router-link></li>
         <li><router-link to="/store" class="mobile-link" @click="close" active-class="active">Shop</router-link></li>
         <li><a href="#about" class="mobile-link" @click.prevent="close">About</a></li>
-        <li><a href="#contact" class="mobile-link" @click.prevent="close">Contact</a></li>
+        <li><router-link to="/contact" class="mobile-link" @click="close" active-class="active">Contact</router-link></li>
         <li><router-link to="/cart" class="mobile-link" @click="close">Cart ({{ cartCount }})</router-link></li>
+        <li v-if="!isSignedIn"><router-link to="/login" class="mobile-link" @click="close">Sign In</router-link></li>
+        <li v-else><a href="#" class="mobile-link" @click.prevent="handleSignOut">Sign Out</a></li>
       </ul>
     </div>
   </nav>
@@ -92,15 +113,17 @@
 
 <script>
 import { useCart } from '../composables/useCart.js'
+import { useAuth } from '../composables/useAuth.js'
 
 export default {
   name: 'TopNav',
   setup() {
     const { cartCount } = useCart()
-    return { cartCount }
+    const { isSignedIn, userName, signOut } = useAuth()
+    return { cartCount, isSignedIn, userName, signOut }
   },
   data() {
-    return { open: false, isDark: false, scrolled: false }
+    return { open: false, isDark: false, scrolled: false, showAccountMenu: false }
   },
   mounted() {
     const saved = localStorage.getItem('theme')
@@ -123,7 +146,13 @@ export default {
       localStorage.setItem('theme', this.isDark ? 'dark' : 'light')
     },
     toggleTheme() { this.setDark(!this.isDark) },
-    onScroll() { this.scrolled = window.scrollY > 24 }
+    onScroll() { this.scrolled = window.scrollY > 24 },
+    handleSignOut() {
+      this.signOut()
+      this.showAccountMenu = false
+      this.close()
+      this.$router.push('/')
+    }
   }
 }
 </script>
@@ -201,6 +230,102 @@ export default {
   align-items: center;
   gap: 0.35rem;
   flex-shrink: 0;
+}
+
+/* Sign in button */
+.signin-btn {
+  padding: 0.45rem 1.2rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.signin-btn:hover {
+  background-color: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
+}
+
+/* Account menu */
+.account-menu {
+  position: relative;
+}
+
+.account-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  max-width: 150px;
+}
+
+.account-btn:hover {
+  background: var(--bg-muted);
+  border-color: var(--border-hover);
+}
+
+.account-email {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  margin-top: 4px;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.dropdown-link {
+  display: block;
+  padding: 12px 16px;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.dropdown-link:last-child {
+  border-bottom: none;
+}
+
+.dropdown-link:hover {
+  background-color: var(--bg-soft);
+  color: var(--accent);
+}
+
+.sign-out-link:hover {
+  background-color: rgba(211, 47, 47, 0.1);
+  color: #d32f2f;
+}
+
+.signin-btn:hover {
+  background-color: var(--accent-hover);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.3);
 }
 
 .icon-btn {
