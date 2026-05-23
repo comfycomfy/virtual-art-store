@@ -14,6 +14,11 @@
     </div>
 
     <div class="container store-layout">
+      <!-- Loading state -->
+      <div v-if="loading" class="empty-state"><p>Loading artworks…</p></div>
+      <!-- Error state -->
+      <div v-else-if="error" class="empty-state"><p>{{ error }}</p><button class="btn btn-outline" @click="loadProducts">Retry</button></div>
+      <template v-else>
       <!-- Filter bar -->
       <div class="filter-bar" role="group" aria-label="Filter by category">
         <button
@@ -49,7 +54,7 @@
       >
         <ProductCard
           v-for="p in sortedProducts"
-          :key="p.id"
+          :key="p._id"
           :product="p"
         />
       </transition-group>
@@ -60,37 +65,60 @@
         <p v-else>No artworks match this filter.</p>
         <button class="btn btn-outline" @click="activeCategory = 'All'">Clear filter</button>
       </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import ProductCard from '../components/ProductCard.vue'
 import { useWishlist } from '../composables/useWishlist.js'
-import allProducts from '../data/products.json'
+import { api } from '../api/client.js'
 
-const { getWishlistIds } = useWishlist()
+const { getWishlistIds, isWishlisted } = useWishlist()
+
+const allProducts   = ref([])
+const categories    = ref(['All', 'Wishlist'])
 const activeCategory = ref('All')
-const sortBy = ref('default')
+const sortBy        = ref('default')
+const loading       = ref(false)
+const error         = ref(null)
 
-const categories = ['All', 'Wishlist', ...new Set(allProducts.map(p => p.category))]
+async function loadProducts() {
+  loading.value = true
+  error.value   = null
+  try {
+    const [prodData, catData] = await Promise.all([
+      api.get('/products?limit=100'),
+      api.get('/products/categories'),
+    ])
+    allProducts.value = prodData.products
+    categories.value  = ['All', 'Wishlist', ...(catData.categories || [])]
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadProducts)
 
 const filteredProducts = computed(() => {
   if (activeCategory.value === 'Wishlist') {
     const wishlistIds = getWishlistIds()
-    return allProducts.filter(p => wishlistIds.includes(p.id))
+    return allProducts.value.filter(p => wishlistIds.includes(p._id))
   }
   return activeCategory.value === 'All'
-    ? allProducts
-    : allProducts.filter(p => p.category === activeCategory.value)
+    ? allProducts.value
+    : allProducts.value.filter(p => p.category === activeCategory.value)
 })
 
 const sortedProducts = computed(() => {
   const list = [...filteredProducts.value]
-  if (sortBy.value === 'price-asc') return list.sort((a, b) => a.price - b.price)
+  if (sortBy.value === 'price-asc')  return list.sort((a, b) => a.price - b.price)
   if (sortBy.value === 'price-desc') return list.sort((a, b) => b.price - a.price)
-  if (sortBy.value === 'title') return list.sort((a, b) => a.title.localeCompare(b.title))
+  if (sortBy.value === 'title')      return list.sort((a, b) => a.title.localeCompare(b.title))
   return list
 })
 </script>

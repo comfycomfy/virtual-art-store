@@ -2,7 +2,7 @@
   <article class="product-card">
     <!-- Image area -->
     <div class="card-media">
-      <router-link :to="`/product/${product.id}`" class="frame-link" :aria-label="`View ${product.title}`">
+      <router-link :to="`/product/${productId}`" class="frame-link" :aria-label="`View ${product.title}`">
         <div class="art-frame card-frame">
           <img
             :src="product.image"
@@ -14,7 +14,7 @@
 
       <!-- Hover overlay actions -->
       <div class="card-overlay" aria-hidden="true">
-        <router-link :to="`/product/${product.id}`" class="overlay-btn" title="Quick view">
+        <router-link :to="`/product/${productId}`" class="overlay-btn" title="Quick view">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
@@ -44,7 +44,7 @@
 
     <!-- Card info -->
     <div class="card-info">
-      <router-link :to="`/product/${product.id}`" class="card-title-link">
+      <router-link :to="`/product/${productId}`" class="card-title-link">
         <h3 class="card-title">{{ product.title }}</h3>
       </router-link>
       <p class="card-creator">{{ product.creator }}</p>
@@ -73,7 +73,8 @@ const { addItem } = useCart()
 const { toggleWishlist, isWishlisted } = useWishlist()
 const added = ref(false)
 
-const wishlisted = computed(() => isWishlisted(props.product.id))
+const productId = computed(() => props.product._id || props.product.id)
+const wishlisted = computed(() => isWishlisted(productId.value))
 
 function onAddToCart() {
   if (!props.product.inStock) return
@@ -83,7 +84,7 @@ function onAddToCart() {
 }
 
 function onWishlist() {
-  toggleWishlist(props.product.id)
+  toggleWishlist(productId.value)
 }
 </script>
 

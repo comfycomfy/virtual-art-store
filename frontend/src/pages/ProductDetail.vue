@@ -1,5 +1,5 @@
 <template>
-  <div class="detail-page" v-if="product">
+  <div class="detail-page" v-if="product" key="loaded">
 
     <!-- Banner breadcrumb -->
     <div class="detail-banner">
@@ -204,7 +204,7 @@
         <div class="products-grid">
           <ProductCard
             v-for="p in recommended"
-            :key="p.id"
+            :key="p._id"
             :product="p"
           />
         </div>
@@ -213,57 +213,79 @@
 
   </div>
 
-  <!-- Not found -->
+  <!-- Loading state -->
+  <div v-else-if="loading" class="not-found container"><p>Loading…</p></div>
+  <!-- Error / not found -->
   <div v-else class="not-found container">
     <h2>Artwork not found</h2>
+    <p v-if="error" class="text-muted">{{ error }}</p>
     <router-link to="/store" class="btn btn-outline mt-2">← Back to Shop</router-link>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useCart } from '../composables/useCart.js'
 import { useWishlist } from '../composables/useWishlist.js'
 import ProductCard from '../components/ProductCard.vue'
-import allProducts from '../data/products.json'
+import { api } from '../api/client.js'
 
-const route = useRoute()
+const route  = useRoute()
+const router = useRouter()
 const { addItem } = useCart()
 const { toggleWishlist, isWishlisted } = useWishlist()
 
-const id = Number(route.params.id)
-const product = allProducts.find(p => p.id === id)
+const product     = ref(null)
+const recommended = ref([])
+const loading     = ref(true)
+const error       = ref(null)
 
-const qty = ref(1)
-const addedToCart = ref(false)
+const qty           = ref(1)
+const addedToCart   = ref(false)
 const openAccordion = ref('desc')
 
-const wishlisted = computed(() => isWishlisted(product?.id))
+const wishlisted = computed(() => isWishlisted(product.value?._id))
 
-const recommended = computed(() =>
-  allProducts.filter(p => p.id !== id).slice(0, 4)
-)
+async function loadProduct() {
+  loading.value = true
+  error.value   = null
+  try {
+    const [prodData, listData] = await Promise.all([
+      api.get(`/products/${route.params.id}`),
+      api.get('/products?limit=5'),
+    ])
+    product.value     = prodData.product
+    recommended.value = listData.products.filter(p => p._id !== route.params.id).slice(0, 4)
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(loadProduct)
 
 function toggle(key) {
   openAccordion.value = openAccordion.value === key ? null : key
 }
 
 function onAddToCart() {
-  if (!product?.inStock) return
-  addItem(product, qty.value)
+  if (!product.value?.inStock) return
+  addItem(product.value, qty.value)
   addedToCart.value = true
   setTimeout(() => { addedToCart.value = false }, 1800)
 }
 
 function onBuyNow() {
-  if (!product?.inStock) return
-  addItem(product, qty.value)
+  if (!product.value?.inStock) return
+  addItem(product.value, qty.value)
+  router.push('/cart')
 }
 
 function onWishlist() {
-  if (product?.id) {
-    toggleWishlist(product.id)
+  if (product.value?._id) {
+    toggleWishlist(product.value._id)
   }
 }
 </script>

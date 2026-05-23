@@ -42,43 +42,43 @@
 
           <div
             v-for="item in cart.items"
-            :key="item.id"
+            :key="item.product?._id || item.product"
             class="cart-row"
           >
             <!-- Image + title -->
             <div class="cart-item-info">
-              <router-link :to="`/product/${item.id}`" class="cart-thumb-link">
+              <router-link :to="`/product/${item.product?._id || item.product}`" class="cart-thumb-link">
                 <div class="art-frame cart-thumb">
-                  <img :src="item.image" :alt="item.title" />
+                  <img :src="item.product?.image" :alt="item.product?.title" />
                 </div>
               </router-link>
               <div>
-                <router-link :to="`/product/${item.id}`" class="cart-item-title">
-                  {{ item.title }}
+                <router-link :to="`/product/${item.product?._id || item.product}`" class="cart-item-title">
+                  {{ item.product?.title }}
                 </router-link>
-                <p class="cart-item-creator">{{ item.creator }}</p>
+                <p class="cart-item-creator">{{ item.product?.creator }}</p>
               </div>
             </div>
 
             <!-- Unit price -->
             <span class="cart-price">
-              ${{ item.price.toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+              ${{ (item.product?.price ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
             </span>
 
             <!-- Quantity -->
             <div class="qty-control">
-              <button class="qty-btn" @click="updateQty(item.id, item.qty - 1)" aria-label="Decrease">−</button>
+              <button class="qty-btn" @click="updateQty(item.product?._id, item.qty - 1)" aria-label="Decrease">−</button>
               <span class="qty-value" aria-live="polite">{{ item.qty }}</span>
-              <button class="qty-btn" @click="updateQty(item.id, item.qty + 1)" aria-label="Increase">+</button>
+              <button class="qty-btn" @click="updateQty(item.product?._id, item.qty + 1)" aria-label="Increase">+</button>
             </div>
 
             <!-- Line total -->
             <span class="cart-line-total">
-              ${{ (item.price * item.qty).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
+              ${{ ((item.product?.price ?? 0) * item.qty).toLocaleString('en-US', { minimumFractionDigits: 2 }) }}
             </span>
 
             <!-- Remove -->
-            <button class="remove-btn" @click="removeItem(item.id)" aria-label="Remove item">
+            <button class="remove-btn" @click="removeItem(item.product?._id)" aria-label="Remove item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"/>
@@ -210,55 +210,60 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCart } from '../composables/useCart.js'
 import { useAuth } from '../composables/useAuth.js'
+import { api } from '../api/client.js'
 
 const router = useRouter()
-const { cart, cartTotal, removeItem, updateQty, clearCart } = useCart()
+const { cart, cartTotal, fetchCart, removeItem, updateQty, clearCart } = useCart()
 const { isSignedIn } = useAuth()
 
 const showCheckoutModal = ref(false)
-const showOrderConfirm = ref(false)
-const orderNumber = ref('')
+const showOrderConfirm  = ref(false)
+const orderNumber       = ref('')
+const isSubmitting      = ref(false)
+
+// Load server cart when user is signed in
+onMounted(() => {
+  if (isSignedIn.value) fetchCart()
+})
 
 const orderTotal = computed(() =>
   cartTotal.value >= 500 ? cartTotal.value : cartTotal.value + 24
 )
 
-function closeCheckoutModal() {
-  showCheckoutModal.value = false
-}
-
-function closeOrderConfirm() {
-  showOrderConfirm.value = false
-}
-
-function generateOrderNumber() {
-  const timestamp = Date.now()
-  const random = Math.floor(Math.random() * 10000)
-  return `ORD-${timestamp.toString().slice(-6)}-${random.toString().padStart(4, '0')}`
-}
+function closeCheckoutModal() { showCheckoutModal.value = false }
+function closeOrderConfirm()  { showOrderConfirm.value  = false }
 
 function onCheckout() {
   if (!isSignedIn.value) {
     showCheckoutModal.value = true
     return
   }
-  
-  // Generate order number and show confirmation
-  orderNumber.value = generateOrderNumber()
+  orderNumber.value = `ORD-${Date.now().toString().slice(-6)}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`
   showOrderConfirm.value = true
 }
 
-function handleConfirmOrder() {
-  // Clear cart and close modal
-  clearCart()
-  showOrderConfirm.value = false
-  
-  // Redirect to home
-  router.push('/')
+async function handleConfirmOrder() {
+  isSubmitting.value = true
+  try {
+    const data = await api.post('/orders', {
+      shippingAddress: { name: 'Guest', line1: 'N/A', city: 'N/A', zip: '00000', country: 'US' },
+    })
+    orderNumber.value = data.order._id.slice(-8).toUpperCase()
+    await clearCart()
+    showOrderConfirm.value = false
+    router.push('/')
+  } catch (err) {
+    // If orders API unavailable, fall back to local clear
+    await clearCart()
+    showOrderConfirm.value = false
+    router.push('/')
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 

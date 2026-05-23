@@ -131,6 +131,9 @@
               <a href="#" @click.prevent>Forgot password?</a>
             </div>
 
+            <!-- Server error -->
+            <p v-if="serverError" class="error-message" style="margin-bottom:0.75rem;">{{ serverError }}</p>
+
             <!-- Sign in button -->
             <button type="submit" class="btn-signin" :disabled="isSubmitting">
               <span v-if="isSubmitting" class="btn-loader"></span>
@@ -159,7 +162,7 @@ import { useRouter } from 'vue-router'
 import { useAuth } from '../composables/useAuth'
 
 const router = useRouter()
-const { signIn } = useAuth()
+const { signIn, register } = useAuth()
 
 const form = reactive({
   username: '',
@@ -173,8 +176,9 @@ const errors = reactive({
   password: ''
 })
 
-const showPassword = ref(false)
-const isSubmitting = ref(false)
+const showPassword  = ref(false)
+const isSubmitting  = ref(false)
+const serverError   = ref('')
 
 const validationRules = {
   username: (value) => {
@@ -186,8 +190,7 @@ const validationRules = {
   },
   email: (value) => {
     if (!value.trim()) return 'Email is required'
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(value)) return 'Please enter a valid email address'
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return 'Please enter a valid email address'
     return ''
   },
   password: (value) => {
@@ -212,29 +215,31 @@ function validateForm() {
 }
 
 async function handleLogin() {
-  if (!validateForm()) {
-    return
-  }
+  if (!validateForm()) return
 
   isSubmitting.value = true
+  serverError.value  = ''
 
   try {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // Sign in user with username
-    signIn(form.username)
-    
-    // Reset form
-    form.username = ''
-    form.email = ''
-    form.password = ''
+    // Try login first; if it fails with 401 try registering (new user flow)
+    await signIn(form.email, form.password)
+    form.username = ''; form.email = ''; form.password = ''
     showPassword.value = false
-    
-    // Redirect to home
     router.push('/')
-  } catch (error) {
-    console.error('Login failed:', error)
+  } catch (err) {
+    if (err.status === 401) {
+      // Account may not exist — attempt registration
+      try {
+        await register(form.username, form.email, form.password)
+        form.username = ''; form.email = ''; form.password = ''
+        showPassword.value = false
+        router.push('/')
+      } catch (regErr) {
+        serverError.value = regErr.message
+      }
+    } else {
+      serverError.value = err.message
+    }
   } finally {
     isSubmitting.value = false
   }
